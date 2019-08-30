@@ -1,11 +1,32 @@
-# #f.readline() gives a generator, that yields one word after another
-# #now i only need to search every word through the novel texts
-# #and count their occurences
-# with open("cleanDict.txt","r",encoding="utf-8") as wordDict:
-#     for i in range(10):
-#         word = wordDict.readline()
-#         print(line)
+import time
 
-
+startTime = time.time()
 
 filepath = "extractedFiles\masterfile.txt"
+
+fileDict = {}
+
+def saveWordInDict(cleanWord):
+    if cleanWord in fileDict:
+        fileDict[cleanWord] += 1
+    else:
+        fileDict[cleanWord] = 1
+
+
+with open(filepath,"r",encoding="utf-8") as textFile:
+    with open("cleanNovelList.txt","r",encoding="utf-8") as dictFile:
+        for line in textFile:
+            # print(line[:-1])
+            for word in dictFile:
+                cleanWord = word[:-1]
+                if cleanWord in line:
+                    if word != "\n":
+                        saveWordInDict(cleanWord)
+                        # print(word[:-1])
+            dictFile.seek(0)
+
+lapsedTime = time.time() - startTime
+print(lapsedTime)
+
+sortedDict = sorted(fileDict.items(), key=lambda kv: kv[1],reverse=True)
+print(sortedDict)
