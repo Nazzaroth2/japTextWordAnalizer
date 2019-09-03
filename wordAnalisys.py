@@ -12,21 +12,36 @@ def saveWordInDict(cleanWord):
     else:
         fileDict[cleanWord] = 1
 
+def createDictList(dictList,ignoreListText):
+    cleanDictList = []
+    for word in dictList:
+        if word in ignoreListText:
+            continue
+        else:
+            cleanDictList.append(word[:-1])
+    return cleanDictList
 
-with open(filepath,"r",encoding="utf-8") as textFile:
+#create a dictList that ignores known words
+with open("ignoreList.txt","r",encoding="utf-8") as ignoreList:
     with open("cleanNovelList.txt","r",encoding="utf-8") as dictFile:
-        for line in textFile:
-            # print(line[:-1])
-            for word in dictFile:
-                cleanWord = word[:-1]
-                if cleanWord in line:
-                    if word != "\n":
-                        saveWordInDict(cleanWord)
-                        # print(word[:-1])
-            dictFile.seek(0)
+        filteredDictList = createDictList(dictFile.readlines(),ignoreList.readlines())
+
+
+#analize the text and create the counted Words Dict
+with open(filepath,"r",encoding="utf-8") as textFile:
+    for line in textFile:
+        for word in filteredDictList:
+            if word in line:
+                if word != "\n":
+                    saveWordInDict(word)
+
+
 
 lapsedTime = time.time() - startTime
-print(lapsedTime)
+
 
 sortedDict = sorted(fileDict.items(), key=lambda kv: kv[1],reverse=True)
 print(sortedDict)
+
+
+print(lapsedTime)
